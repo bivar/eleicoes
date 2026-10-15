@@ -1,246 +1,315 @@
 # -*- coding: utf-8 -*-
 """
-Configurações de mandatos presidenciais (2003-2026), paleta visual e catálogo de indicadores.
+Configurações de mandatos presidenciais (2003-2026), fotos oficiais, paleta visual,
+metadados de APIs e camada de interpretação de dados em linguagem acessível.
 """
 
+FOTOS_PRESIDENTES = {
+    "lula_2007": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Lula_-_foto_oficial_-_05_jan_2007_%283x4_cropped%29.jpg",
+    "dilma": "https://upload.wikimedia.org/wikipedia/commons/8/81/Dilma_Rousseff_-_foto_oficial_2011-01-09.jpg",
+    "temer": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Presidente_Michel_Temer_%28foto_oficial%29_-_cortada.jpg",
+    "bolsonaro": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Jair_Bolsonaro%2C_Presidente_da_Rep%C3%BAblica_Federativa_do_Brasil_%28cropped%29.jpg",
+    "lula_2023": "https://upload.wikimedia.org/wikipedia/commons/8/84/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28quadrada%29.jpg"
+}
+
 MANDATOS_CICLO = [
-    {"id": "Lula I (2003–2006)", "presidente": "Luiz Inácio Lula da Silva", "inicio": 2003, "fim": 2006, "cor": "#dc2626"},
-    {"id": "Lula II (2007–2010)", "presidente": "Luiz Inácio Lula da Silva", "inicio": 2007, "fim": 2010, "cor": "#b91c1c"},
-    {"id": "Dilma I (2011–2014)", "presidente": "Dilma Rousseff", "inicio": 2011, "fim": 2014, "cor": "#ea580c"},
-    {"id": "Dilma II / Temer (2015–2018)", "presidente": "Dilma Rousseff / Michel Temer", "inicio": 2015, "fim": 2018, "cor": "#7c3aed"},
-    {"id": "Bolsonaro (2019–2022)", "presidente": "Jair Bolsonaro", "inicio": 2019, "fim": 2022, "cor": "#2563eb"},
-    {"id": "Lula III (2023–2026)", "presidente": "Luiz Inácio Lula da Silva", "inicio": 2023, "fim": 2026, "cor": "#059669"},
+    {"id": "Lula I (2003–2006)", "curto": "Lula I", "presidente": "Luiz Inácio Lula da Silva", "inicio": 2003, "fim": 2006, "cor": "#dc2626", "foto": FOTOS_PRESIDENTES["lula_2007"], "foto_extra": None},
+    {"id": "Lula II (2007–2010)", "curto": "Lula II", "presidente": "Luiz Inácio Lula da Silva", "inicio": 2007, "fim": 2010, "cor": "#b91c1c", "foto": FOTOS_PRESIDENTES["lula_2007"], "foto_extra": None},
+    {"id": "Dilma I (2011–2014)", "curto": "Dilma I", "presidente": "Dilma Rousseff", "inicio": 2011, "fim": 2014, "cor": "#ea580c", "foto": FOTOS_PRESIDENTES["dilma"], "foto_extra": None},
+    {"id": "Dilma II / Temer (2015–2018)", "curto": "Dilma II / Temer", "presidente": "Dilma Rousseff & Michel Temer", "inicio": 2015, "fim": 2018, "cor": "#7c3aed", "foto": FOTOS_PRESIDENTES["dilma"], "foto_extra": FOTOS_PRESIDENTES["temer"]},
+    {"id": "Bolsonaro (2019–2022)", "curto": "Bolsonaro", "presidente": "Jair Bolsonaro", "inicio": 2019, "fim": 2022, "cor": "#2563eb", "foto": FOTOS_PRESIDENTES["bolsonaro"], "foto_extra": None},
+    {"id": "Lula III (2023–2026)", "curto": "Lula III", "presidente": "Luiz Inácio Lula da Silva", "inicio": 2023, "fim": 2026, "cor": "#059669", "foto": FOTOS_PRESIDENTES["lula_2023"], "foto_extra": None},
 ]
 
 MANDATOS_SEPARADOS = [
-    {"id": "Lula I (2003–2006)", "presidente": "Luiz Inácio Lula da Silva", "inicio": 2003, "fim": 2006, "cor": "#dc2626"},
-    {"id": "Lula II (2007–2010)", "presidente": "Luiz Inácio Lula da Silva", "inicio": 2007, "fim": 2010, "cor": "#b91c1c"},
-    {"id": "Dilma I (2011–2014)", "presidente": "Dilma Rousseff", "inicio": 2011, "fim": 2014, "cor": "#ea580c"},
-    {"id": "Dilma II (2015–2016)", "presidente": "Dilma Rousseff", "inicio": 2015, "fim": 2016, "cor": "#d97706"},
-    {"id": "Temer (2016–2018)", "presidente": "Michel Temer", "inicio": 2017, "fim": 2018, "cor": "#0284c7"},
-    {"id": "Bolsonaro (2019–2022)", "presidente": "Jair Bolsonaro", "inicio": 2019, "fim": 2022, "cor": "#2563eb"},
-    {"id": "Lula III (2023–2026)", "presidente": "Luiz Inácio Lula da Silva", "inicio": 2023, "fim": 2026, "cor": "#059669"},
+    {"id": "Lula I (2003–2006)", "curto": "Lula I", "presidente": "Luiz Inácio Lula da Silva", "inicio": 2003, "fim": 2006, "cor": "#dc2626", "foto": FOTOS_PRESIDENTES["lula_2007"], "foto_extra": None},
+    {"id": "Lula II (2007–2010)", "curto": "Lula II", "presidente": "Luiz Inácio Lula da Silva", "inicio": 2007, "fim": 2010, "cor": "#b91c1c", "foto": FOTOS_PRESIDENTES["lula_2007"], "foto_extra": None},
+    {"id": "Dilma I (2011–2014)", "curto": "Dilma I", "presidente": "Dilma Rousseff", "inicio": 2011, "fim": 2014, "cor": "#ea580c", "foto": FOTOS_PRESIDENTES["dilma"], "foto_extra": None},
+    {"id": "Dilma II (2015–2016)", "curto": "Dilma II", "presidente": "Dilma Rousseff", "inicio": 2015, "fim": 2016, "cor": "#d97706", "foto": FOTOS_PRESIDENTES["dilma"], "foto_extra": None},
+    {"id": "Temer (2016–2018)", "curto": "Temer", "presidente": "Michel Temer", "inicio": 2017, "fim": 2018, "cor": "#0284c7", "foto": FOTOS_PRESIDENTES["temer"], "foto_extra": None},
+    {"id": "Bolsonaro (2019–2022)", "curto": "Bolsonaro", "presidente": "Jair Bolsonaro", "inicio": 2019, "fim": 2022, "cor": "#2563eb", "foto": FOTOS_PRESIDENTES["bolsonaro"], "foto_extra": None},
+    {"id": "Lula III (2023–2026)", "curto": "Lula III", "presidente": "Luiz Inácio Lula da Silva", "inicio": 2023, "fim": 2026, "cor": "#059669", "foto": FOTOS_PRESIDENTES["lula_2023"], "foto_extra": None},
 ]
 
 INDICADORES = {
     "pib_cresc_aa": {
         "nome": "Crescimento do PIB Real",
         "eixo": "Macroeconomia",
+        "icone": "📈",
         "unidade": "% a.a.",
         "polaridade": "maior_melhor",
         "tipo_agregacao": "taxa_composta",
         "fonte": "IBGE – Sistema de Contas Nacionais Trimestrais (Tabela SIDRA 5932 / SGS 7326)",
         "url": "https://www.ibge.gov.br/estatisticas/economicas/contas-nacionais/9300-contas-nacionais",
         "codigo_api": "SGS 7326 / SIDRA 5932",
-        "descricao": "Variação percentual anual do Produto Interno Bruto a preços constantes."
+        "descricao": "Variação percentual anual de tudo o que o país produz em bens e serviços, já descontada a inflação.",
+        "explicacao_leigo": "Pense no PIB como o 'tamanho do bolo' da economia brasileira. Quando o PIB cresce, há mais empresas vendendo, mais obras e maior geração de renda; quando fica negativo, o país está em recessão.",
+        "insight_geral": "O Brasil viveu seu ciclo de maior expansão em Lula II (+4,58% a.a. na média composta, impulsionado pelo boom de commodities e crédito), sofreu uma forte recessão no biênio 2015–2016 (-3,55% e -3,28%), enfrentou o choque da pandemia em 2020 (-3,28%) seguido de recuperação e manteve expansão média próxima de 2,7% a.a. entre 2023 e 2026."
     },
     "ipca_aa": {
         "nome": "Inflação Oficial (IPCA)",
         "eixo": "Macroeconomia",
+        "icone": "🛒",
         "unidade": "% a.a.",
         "polaridade": "menor_melhor",
         "tipo_agregacao": "taxa_composta",
         "fonte": "IBGE / Banco Central do Brasil (Série SGS 433)",
         "url": "https://www3.bcb.gov.br/sgspub/consultarvalores/consultarValoresSeries.do?method=consultarSeries&series=433",
         "codigo_api": "SGS 433 / SIDRA 1737",
-        "descricao": "Índice Nacional de Preços ao Consumidor Amplo acumulado em 12 meses."
+        "descricao": "Índice Nacional de Preços ao Consumidor Amplo acumulado em 12 meses.",
+        "explicacao_leigo": "Mede o quanto o custo de vida subiu no supermercado, transporte, saúde e moradia. Quanto menor e mais controlada a inflação, mais o seu salário rende até o fim do mês.",
+        "insight_geral": "Os dois maiores picos inflacionários desde 2003 ocorreram em 2015 (10,67%, com o realinhamento de tarifas de energia e combustíveis) e em 2021 (10,06%, sob choque global de cadeias produtivas e alimentos na pandemia). Já as menores taxas anuais foram registradas em 2017 (2,95%, com supersafra agrícola) e 2006 (3,14%)."
     },
     "selic_meta_fim": {
         "nome": "Taxa Básica de Juros (Selic Meta)",
         "eixo": "Macroeconomia",
+        "icone": "🏦",
         "unidade": "% a.a.",
         "polaridade": "menor_melhor",
         "tipo_agregacao": "estoque_fim",
         "fonte": "Banco Central do Brasil (Série SGS 432 / 11)",
         "url": "https://dadosabertos.bcb.gov.br/dataset/11-taxa-de-juros---selic",
         "codigo_api": "SGS 432",
-        "descricao": "Meta para a taxa Selic definida pelo COPOM ao final de cada ano."
+        "descricao": "Meta para a taxa básica de juros Selic definida pelo Banco Central ao final de cada ano.",
+        "explicacao_leigo": "A Selic é o 'freio' que o Banco Central usa para controlar a inflação. Quando ela sobe, financiamentos, cartões e empréstimos ficam mais caros; quando cai, o crédito fica mais barato.",
+        "insight_geral": "A Selic caiu estruturalmente dos patamares de 16%–18% em 2003–2005 para 6,5% em 2018 e atingiu a mínima histórica de 2,0% em 2020 durante a pandemia. Com a alta global da inflação pós-2021 e incertezas fiscais, voltou a operar acima de 11%–14% entre 2022 e 2026."
     },
     "cambio_medio": {
-        "nome": "Taxa de Câmbio Nominal (PTAX)",
+        "nome": "Taxa de Câmbio Nominal (Dólar PTAX)",
         "eixo": "Macroeconomia",
+        "icone": "💵",
         "unidade": "R$ / US$",
         "polaridade": "neutro",
         "tipo_agregacao": "estoque_fim",
         "fonte": "Banco Central do Brasil (Série SGS 3698)",
         "url": "https://www3.bcb.gov.br/sgspub/",
         "codigo_api": "SGS 3698",
-        "descricao": "Taxa média anual de câmbio livre (R$/US$ venda)."
+        "descricao": "Cotação média anual do dólar comercial (R$/US$).",
+        "explicacao_leigo": "Mostra quantos reais são necessários para comprar 1 dólar. Dólar mais alto encarece eletrônicos, trigo e combustíveis, mas aumenta a receita em reais de quem exporta soja, petróleo e minério.",
+        "insight_geral": "O Real valorizou-se fortemente entre 2003 (R$ 3,07) e 2011 (R$ 1,67) com a entrada recorde de dólares. A partir de 2015 (crise fiscal) e especialmente em 2020 (pandemia e juros a 2%), o dólar mudou de patamar para a faixa acima de R$ 5,00."
     },
     "divida_bruta_pib": {
         "nome": "Dívida Bruta do Governo Geral (DBGG)",
         "eixo": "Fiscal e Dívida",
+        "icone": "🏛️",
         "unidade": "% do PIB",
         "polaridade": "menor_melhor",
         "tipo_agregacao": "estoque_fim",
         "fonte": "Banco Central do Brasil (Série SGS 13762)",
         "url": "https://www.bcb.gov.br/estatisticas/estatisticasfiscais",
         "codigo_api": "SGS 13762",
-        "descricao": "Dívida Bruta do Governo Geral (Governo Federal, INSS, Estados e Municípios) em proporção ao PIB."
+        "descricao": "Total da dívida pública (União, INSS, Estados e Municípios) comparada ao tamanho do PIB.",
+        "explicacao_leigo": "Funciona como comparar o saldo devedor de uma família com a sua renda anual. Se a dívida cresce muito mais rápido que o PIB, o governo gasta cada vez mais impostos apenas pagando juros.",
+        "insight_geral": "A Dívida Bruta manteve-se entre 48% e 56% do PIB de 2003 a 2014, deu um salto de quase 20 pontos percentuais entre 2014 e 2018 (chegando a 75,3% com a recessão e déficits fiscais), atingiu pico de 86,9% na pandemia (2020), recuou para 71,7% em 2022 com o efeito da inflação sobre o PIB nominal e voltou a subir para 81,9% até 2026 sob juros elevados."
     },
     "divida_liquida_pib": {
         "nome": "Dívida Líquida do Setor Público (DLSP)",
         "eixo": "Fiscal e Dívida",
+        "icone": "⚖️",
         "unidade": "% do PIB",
         "polaridade": "menor_melhor",
         "tipo_agregacao": "estoque_fim",
         "fonte": "Banco Central do Brasil (Série SGS 4513)",
         "url": "https://dadosabertos.bcb.gov.br/dataset/4513-divida-liquida-do-setor-publico--pib---total---setor-publico-consolidado/resource/3337fe4f-a3c6-4a68-94e6-aa099e4607c0",
         "codigo_api": "SGS 4513",
-        "descricao": "Dívida Líquida do Setor Público Consolidado como proporção do PIB."
+        "descricao": "Dívida total do setor público descontando os ativos financeiros e reservas internacionais do governo.",
+        "explicacao_leigo": "É a dívida do governo descontando o 'dinheiro guardado no cofre' (como as reservas em dólar do Banco Central). Ajuda a ver o patrimônio líquido financeiro do Estado.",
+        "insight_geral": "Caiu de 54,3% do PIB em 2003 para a mínima histórica de 30,5% em 2013 graças aos superávits primários e ao acúmulo de reservas. Desde 2014, voltou a crescer de forma contínua até superar 65% do PIB em 2026."
     },
     "resultado_primario_pib": {
         "nome": "Resultado Primário do Setor Público",
         "eixo": "Fiscal e Dívida",
+        "icone": "🧾",
         "unidade": "% do PIB",
         "polaridade": "maior_melhor",
         "tipo_agregacao": "fluxo_media",
         "fonte": "Tesouro Transparente (RTN CKAN) e Banco Central",
         "url": "https://www.tesourotransparente.gov.br/temas/estatisticas-fiscais-e-planejamento/resultado-do-tesouro-nacional-rtn-conteudos-relacionados",
         "codigo_api": "Tesouro CKAN / SGS 5793",
-        "descricao": "Superávit (+) ou déficit (-) primário anual consolidado em % do PIB."
+        "descricao": "Diferença entre a arrecadação e as despesas do governo (sem contar os gastos com juros da dívida).",
+        "explicacao_leigo": "Mostra se o governo fechou o ano no azul (superávit, economizando para abater juros) ou no vermelho (déficit, gastando mais do que arrecadou em impostos).",
+        "insight_geral": "De 2003 a 2013 o país entregou superávits primários contínuos entre 1,7% e 3,7% do PIB. Em 2014 iniciou-se um ciclo de déficits primários (com pico de -9,24% do PIB em 2020 devido aos gastos emergenciais da COVID-19), interrompido por superávits em 2021–2022 e retomando leves déficits próximos da estabilidade entre 2024 e 2026."
     },
     "desemprego_medio": {
         "nome": "Taxa Média de Desocupação (Desemprego)",
         "eixo": "Trabalho e Renda",
+        "icone": "💼",
         "unidade": "%",
         "polaridade": "menor_melhor",
         "tipo_agregacao": "estoque_fim",
         "fonte": "IBGE – PNAD Contínua (Tabela SIDRA 4099) e PME harmonizada via Ipeadata",
         "url": "https://www.ibge.gov.br/estatisticas/sociais/trabalho/9173-pesquisa-nacional-por-amostra-de-domicilios-continua-trimestral.html",
         "codigo_api": "SIDRA 4099 / Ipeadata",
-        "descricao": "Percentual médio anual da força de trabalho desocupada."
+        "descricao": "Percentual de trabalhadores na força de trabalho que estão procurando emprego e não encontram.",
+        "explicacao_leigo": "De cada 100 brasileiros que querem trabalhar e estão procurando vaga, quantos estão sem trabalho no momento.",
+        "insight_geral": "O desemprego recuou de 12,3% em 2003 para cerca de 6,0%–6,9% entre 2011 e 2014, dobrou durante a crise de 2015–2017 e atingiu o pico de 13,8% na pandemia (2020). A partir de 2022 iniciou forte queda e renovou as mínimas históricas da PNAD Contínua em 2025–2026 (5,4%)."
     },
     "salario_minimo_real_2026": {
-        "nome": "Salário Mínimo Real (Preços de 2026)",
+        "nome": "Salário Mínimo Real (Poder de Compra 2026)",
         "eixo": "Trabalho e Renda",
+        "icone": "🪙",
         "unidade": "R$ (2026)",
         "polaridade": "maior_melhor",
         "tipo_agregacao": "estoque_fim",
         "fonte": "Ipeadata (GAC12_SALMINRE12) e BCB (SGS 1619) deflacionado pelo IPCA",
         "url": "https://www.ipea.gov.br/portal/categorias/2-uncategorised/1825-api",
         "codigo_api": "Ipea GAC12_SALMINRE12",
-        "descricao": "Poder de compra real do salário mínimo nacional em reais constantes de 2026."
+        "descricao": "Valor do salário mínimo nacional corrigido pela inflação a preços constantes de 2026.",
+        "explicacao_leigo": "Mostra quanto o salário mínimo daquela época compraria hoje, já descontando toda a inflação. Permite ver quando houve ganho real acima da carestia.",
+        "insight_geral": "O poder de compra real do salário mínimo quase dobrou em 23 anos: saiu do equivalente a R$ 998 em 2003 para R$ 1.694 em 2014 (política de valorização pela inflação + PIB), ficou praticamente estável entre 2015 e 2022 e retomou ganhos reais entre 2023 e 2026 (chegando a R$ 1.936)."
     },
     "gini_renda": {
         "nome": "Índice de Gini da Renda Domiciliar",
         "eixo": "Social e Desigualdade",
+        "icone": "🤝",
         "unidade": "Índice (0–1)",
         "polaridade": "menor_melhor",
         "tipo_agregacao": "estoque_fim",
         "fonte": "IBGE – Síntese de Indicadores Sociais / PNAD Contínua e Banco Mundial",
         "url": "https://pypi.org/project/wbgapi/",
         "codigo_api": "SIDRA 7435 / WBG SI.POV.GINI",
-        "descricao": "Mede a concentração de renda domiciliar per capita (quanto mais próximo de 0, menor a desigualdade)."
+        "descricao": "Mede a concentração de renda no país (0 = igualdade perfeita; 1 = desigualdade máxima).",
+        "explicacao_leigo": "Mede a distância entre os mais ricos e os mais pobres. Quanto menor esse número, melhor distribuída está a renda entre as famílias brasileiras.",
+        "insight_geral": "Caiu de 0,581 em 2003 para 0,515 em 2015 impulsionado pela formalização do trabalho e programas de transferência de renda, piorou entre 2016 e 2018 com o desemprego em alta e atingiu o menor patamar histórico da série em 2024 (0,504)."
     },
     "taxa_pobreza_pct": {
         "nome": "Taxa de Pobreza Monetária",
         "eixo": "Social e Desigualdade",
+        "icone": "🏘️",
         "unidade": "% da pop.",
         "polaridade": "menor_melhor",
         "tipo_agregacao": "estoque_fim",
         "fonte": "IBGE (Síntese de Indicadores Sociais) e Ipeadata",
         "url": "https://www.ipeadata.gov.br/",
         "codigo_api": "IBGE SIS / WBG SI.POV.UMIC",
-        "descricao": "Proporção da população abaixo da linha de pobreza monetária (critério Banco Mundial / IBGE)."
+        "descricao": "Percentual de brasileiros vivendo abaixo da linha de pobreza monetária (critério internacional Banco Mundial/IBGE).",
+        "explicacao_leigo": "De cada 100 moradores do país, quantos têm renda familiar insuficiente para cobrir necessidades básicas de alimentação, moradia e vestuário.",
+        "insight_geral": "A pobreza caiu quase pela metade entre 2003 (41,8%) e 2014 (22,8%), voltou a subir na recessão de 2015–2017 e bateu 36,7% em 2021 na redução do auxílio pandêmico e alta inflacionária, recuando novamente para a faixa de 22%–23% em 2024–2026."
     },
     "ideb_anos_iniciais": {
         "nome": "IDEB – Ensino Fundamental (Anos Iniciais)",
         "eixo": "Educação",
+        "icone": "📚",
         "unidade": "Nota (0–10)",
         "polaridade": "maior_melhor",
         "tipo_agregacao": "estoque_fim",
         "fonte": "INEP – Índice de Desenvolvimento da Educação Básica",
         "url": "https://www.gov.br/inep/pt-br/areas-de-atuacao/pesquisas-estatisticas-e-indicadores/ideb",
-        "codigo_api": "INEP IDEB / Base dos Dados",
-        "descricao": "Indicador nacional de qualidade educacional nos anos iniciais (1º ao 5º ano)."
+        "codigo_api": "INEP IDEB",
+        "descricao": "Nota nacional de qualidade da educação do 1º ao 5º ano (combina aprendizado em Português/Matemática e aprovação).",
+        "explicacao_leigo": "É o boletim das escolas brasileiras para crianças de 6 a 10 anos, indo de 0 a 10. Avalia se os alunos estão aprendendo de verdade e passando de ano sem abandono.",
+        "insight_geral": "É uma das trajetórias mais consistentes de política pública no Brasil: subiu em quase todos os governos desde 2003 (de 3,6 para 6,2 em 2026), com apenas um leve recuo de 5,9 para 5,8 em 2020–2021 pelo fechamento das escolas na pandemia."
     },
     "ideb_ensino_medio": {
         "nome": "IDEB – Ensino Médio",
         "eixo": "Educação",
+        "icone": "🎓",
         "unidade": "Nota (0–10)",
         "polaridade": "maior_melhor",
         "tipo_agregacao": "estoque_fim",
         "fonte": "INEP – Índice de Desenvolvimento da Educação Básica",
         "url": "https://www.gov.br/inep/pt-br/areas-de-atuacao/pesquisas-estatisticas-e-indicadores/ideb",
-        "codigo_api": "INEP IDEB / Base dos Dados",
-        "descricao": "Indicador nacional de qualidade educacional no Ensino Médio."
+        "codigo_api": "INEP IDEB",
+        "descricao": "Nota nacional de qualidade educacional no Ensino Médio.",
+        "explicacao_leigo": "Avalia o aprendizado dos jovens no Ensino Médio e a evasão escolar. Historicamente é o maior gargalo da educação básica brasileira.",
+        "insight_geral": "Ficou estagnado em 3,7 durante todo o período de 2010 a 2015, avançou para 4,2 em 2019 e chegou a 4,4–4,5 entre 2024 e 2026, ainda abaixo das metas originais do Plano Nacional de Educação."
     },
     "taxa_analfabetismo_15m": {
         "nome": "Taxa de Analfabetismo (15 anos ou mais)",
         "eixo": "Educação",
+        "icone": "✏️",
         "unidade": "%",
         "polaridade": "menor_melhor",
         "tipo_agregacao": "estoque_fim",
         "fonte": "IBGE – PNAD Contínua Educação / Censo Demográfico",
         "url": "https://www.ibge.gov.br/estatisticas/sociais/trabalho/17270-pnad-continua.html",
         "codigo_api": "SIDRA 7113",
-        "descricao": "Percentual da população de 15 anos ou mais que não sabe ler e escrever."
+        "descricao": "Percentual da população de 15 anos ou mais que não sabe ler e escrever um bilhete simples.",
+        "explicacao_leigo": "Mostra a parcela de jovens, adultos e idosos que ainda não foram alfabetizados no Brasil.",
+        "insight_geral": "Apresentou queda contínua e ininterrupta ao longo dos 6 mandatos: reduziu-se a menos da metade entre 2003 (11,6%) e 2026 (5,1%)."
     },
     "mortalidade_infantil_mil": {
         "nome": "Taxa de Mortalidade Infantil",
         "eixo": "Saúde",
+        "icone": "👶",
         "unidade": "por mil nasc. vivos",
         "polaridade": "menor_melhor",
         "tipo_agregacao": "estoque_fim",
         "fonte": "IBGE – Tábuas Completas de Mortalidade e SIM/DATASUS",
         "url": "https://www.ibge.gov.br/estatisticas/sociais/populacao/9126-tabuas-completas-de-mortalidade.html",
         "codigo_api": "IBGE Tábuas / DATASUS MRT.1.01",
-        "descricao": "Óbitos de menores de 1 ano para cada mil nascidos vivos."
+        "descricao": "Número de crianças que falecem antes de completar 1 ano de vida para cada 1.000 nascidos vivos.",
+        "explicacao_leigo": "É um dos termômetros mais importantes de saúde pública, saneamento básico, vacinação e acompanhamento pré-natal pelo SUS.",
+        "insight_geral": "Caiu mais de 60% em duas décadas, saindo de 24,68 por mil em 2003 para menos de 10 por mil em 2026, refletindo a expansão da Estratégia Saúde da Família, vacinação e saneamento."
     },
     "expectativa_vida_anos": {
         "nome": "Expectativa de Vida ao Nascer",
         "eixo": "Saúde",
+        "icone": "❤️",
         "unidade": "Anos",
         "polaridade": "maior_melhor",
         "tipo_agregacao": "estoque_fim",
         "fonte": "IBGE – Tábuas Completas de Mortalidade",
         "url": "https://www.ibge.gov.br/estatisticas/sociais/populacao/9126-tabuas-completas-de-mortalidade.html",
         "codigo_api": "IBGE Tábuas de Mortalidade",
-        "descricao": "Esperança de vida média ao nascer da população brasileira (impactada em 2020-2021 pela COVID-19)."
+        "descricao": "Número médio de anos que um recém-nascido brasileiro espera viver.",
+        "explicacao_leigo": "Resume a longevidade da população brasileira. Sobe com avanços médicos e qualidade de vida, mas sofre quedas bruscas em crises sanitárias graves.",
+        "insight_geral": "Subiu de 71,3 anos em 2003 para 76,4 anos em 2019, sofreu uma queda histórica para 72,8 anos em 2021 devido à mortalidade da pandemia de COVID-19 e recuperou a trajetória de alta até 77,0 anos em 2026."
     },
     "taxa_homicidios_100m": {
         "nome": "Taxa de Homicídios por 100 mil hab.",
         "eixo": "Segurança Pública",
+        "icone": "🛡️",
         "unidade": "por 100 mil hab.",
         "polaridade": "menor_melhor",
         "tipo_agregacao": "estoque_fim",
         "fonte": "IPEA e Fórum Brasileiro de Segurança Pública – Atlas da Violência (SIM/DATASUS)",
         "url": "https://www.ipea.gov.br/atlasviolencia/dados-series/20/",
         "codigo_api": "Atlas da Violência Série 20",
-        "descricao": "Taxa anual de homicídios registrados por 100 mil habitantes no Brasil."
+        "descricao": "Homicídios registrados no Sistema de Informações sobre Mortalidade (SIM/MS) para cada 100 mil habitantes.",
+        "explicacao_leigo": "Mede o nível de violência letal no país a partir dos atestados de óbito oficiais do Ministério da Saúde.",
+        "insight_geral": "A violência letal subiu durante os anos 2010 até atingir o recorde histórico de 31,6 por 100 mil hab. em 2017 (guerra de facções). A partir de 2018 iniciou uma queda consistente — associada à trégua entre facções, políticas estaduais e transição demográfica (envelhecimento da população) — chegando ao menor nível da série em 2025–2026 (~20 por 100 mil)."
     },
     "desmatamento_amazonia_km2": {
         "nome": "Desmatamento na Amazônia Legal (PRODES)",
         "eixo": "Meio Ambiente",
+        "icone": "🌳",
         "unidade": "km²/ano",
         "polaridade": "menor_melhor",
         "tipo_agregacao": "fluxo_soma",
         "fonte": "INPE – Projeto PRODES / Plataforma TerraBrasilis",
         "url": "https://terrabrasilis.dpi.inpe.br/app/dashboard/deforestation/biomes/legal_amazon/increments",
         "codigo_api": "TerraBrasilis PRODES ALB",
-        "descricao": "Incremento anual de área desmatada por corte raso na Amazônia Legal Brasileira (km²)."
+        "descricao": "Área anual de floresta nativa desmatada por corte raso na Amazônia Legal medida por satélite pelo INPE.",
+        "explicacao_leigo": "Equivale à área de floresta amazônica derrubada a cada ano. 1.000 km² correspondem a cerca de 100 mil campos de futebol.",
+        "insight_geral": "Partiu de um pico altíssimo em 2004 (27.772 km²) e caiu 83% até atingir a mínima histórica em 2012 (4.571 km²) com o plano PPCDAm e monitoramento por satélite. Voltou a subir entre 2019 e 2022 (chegando a 13.038 km² em 2021) e recuou mais de 50% entre 2023 e 2025/2026 (5.731 km² em 2025)."
     },
     "saldo_comercial_us_bi": {
         "nome": "Saldo da Balança Comercial",
         "eixo": "Balança Comercial e Setor Externo",
+        "icone": "🚢",
         "unidade": "US$ bilhões",
         "polaridade": "maior_melhor",
         "tipo_agregacao": "fluxo_soma",
         "fonte": "MDIC – Sistema Comex Stat / Estatísticas de Comércio Exterior",
         "url": "https://comexstat.mdic.gov.br/pt/geral",
         "codigo_api": "MDIC Comex Stat / SGS 22707",
-        "descricao": "Superávit (+) ou déficit (-) anual da balança comercial brasileira (Exportações FOB menos Importações FOB)."
+        "descricao": "Diferença entre o total de exportações e importações brasileiras de mercadorias em dólares.",
+        "explicacao_leigo": "Mostra se o Brasil vendeu mais produtos para o exterior (soja, petróleo, minério, carnes, aviões) do que comprou de outros países.",
+        "insight_geral": "Após saldos tímidos e um leve déficit em 2014 (-US$ 4,06 bi), a balança comercial brasileira ganhou forte tração com o crescimento do agronegócio e da extração de petróleo do pré-sal, batendo recordes históricos entre 2023 e 2025 (US$ 98,9 bi em 2023, US$ 74,5 bi em 2024 e US$ 68,3 bi em 2025)."
     },
     "reservas_internacionais_us_bi": {
-        "nome": "Reservas Internacionais (Conceito Liquidez)",
+        "nome": "Reservas Internacionais (Colchão Cambial)",
         "eixo": "Balança Comercial e Setor Externo",
+        "icone": "🛡️",
         "unidade": "US$ bilhões",
         "polaridade": "maior_melhor",
         "tipo_agregacao": "estoque_fim",
         "fonte": "Banco Central do Brasil – Estatísticas do Setor Externo (Série SGS 13621)",
         "url": "https://www.bcb.gov.br/estatisticas/estatisticassetorexterno",
         "codigo_api": "SGS 13621",
-        "descricao": "Estoque de reservas internacionais brasileiras ao final de cada ano em US$ bilhões."
+        "descricao": "Estoque de moedas estrangeiras e ouro mantido pelo Banco Central para proteger o país contra crises externas.",
+        "explicacao_leigo": "É a 'poupança em dólar' do Brasil. Impede que o país quebre ou precise recorrer ao FMI quando há crises mundiais.",
+        "insight_geral": "Multiplicou-se por 7 vezes entre 2003 (US$ 49,3 bi) e 2012 (US$ 373,1 bi) durante os governos Lula I, Lula II e Dilma I, mantendo-se desde então como um colchão de segurança entre US$ 325 bi e US$ 375 bi."
     }
 }
