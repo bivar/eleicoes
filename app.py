@@ -24,7 +24,7 @@ from src.etl_apis import load_consolidated_data
 from src.metrics import calcular_resumo_mandatos
 
 st.set_page_config(
-    page_title="Observatório Socioeconômico do Brasil (2003–2026)",
+    page_title="Análise de Mandatos Presidenciais (2003–2026)",
     page_icon="🇧🇷",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -290,9 +290,10 @@ mandatos_ativos = st.sidebar.multiselect(
 
 df_filtrado = df[df[col_grupo].isin(mandatos_ativos)].copy()
 
-# Abas Principais (incluindo a nova Página Inicial Explicativa)
-aba_home, aba1, aba2, aba3, aba4 = st.tabs([
+# Abas Principais (incluindo Apresentação e a nova página de Conclusão & Balanço Geral)
+aba_home, aba_conclusao, aba1, aba2, aba3, aba4 = st.tabs([
     "🏠 Apresentação do Projeto",
+    "🎯 Conclusão & Balanço Geral",
     "🏆 Comparativo por Governo",
     "📈 Linha do Tempo (2003–2026)",
     "⚖️ Evolução do 1º ao 4º Ano",
@@ -399,6 +400,224 @@ with aba_home:
 
     st.info("**Como começar:** Use o menu lateral à esquerda para escolher o **Tema** e o **Indicador**, e clique na aba **Comparativo por Governo** ou **Linha do Tempo (2003–2026)** logo acima!")
 
+with aba_conclusao:
+    st.markdown(
+        """
+        <div style="background:linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color:#ffffff; border-radius:18px; padding:24px 28px; margin-bottom:18px;">
+            <span style="background:rgba(250,204,21,0.2); border:1px solid rgba(250,204,21,0.45); color:#fde047; font-size:11px; font-weight:800; padding:4px 10px; border-radius:999px; text-transform:uppercase;">
+                Síntese Executiva • 2003 a 2026
+            </span>
+            <h2 style="color:#ffffff; font-size:24px; font-weight:800; margin:10px 0 6px 0;">
+                Afinal, o que os números dizem sobre os governos?
+            </h2>
+            <p style="color:#cbd5e1; font-size:14px; line-height:1.55; margin:0;">
+                Nenhum mandato venceu em todos os 20 indicadores, mas quando cruzamos <b>Economia no Bolso</b>,
+                <b>Contas Públicas</b> e <b>Avanço Social/Ambiental</b>, os dados mostram claramente quem entregou o melhor equilíbrio geral
+                e quais foram os acertos e tropeços de cada período.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.subheader("1. Quem se destacou em quê? (Destaques por Área)")
+    podio_cards = [
+        
+        {
+            "titulo": "💰 Maior Economia Fiscal & Queda Rápida da Pobreza",
+            "gov": "Lula I (2003–2006)",
+            "cor": "#dc2626",
+            "foto": DEFAULT_FOTOS["Lula I (2003–2006)"][0],
+            "resumo": "Entregou o maior superávit primário médio (+3,46% do PIB ao ano), derrubou a inflação de 9,3% para 3,1% ao ano e tirou 10% da população da linha de pobreza em 4 anos."
+        },
+        {
+            "titulo": "🏆 Melhor Equilíbrio Geral (Economia + Fiscal + Social)",
+            "gov": "Lula II (2007–2010)",
+            "cor": "#b91c1c",
+            "foto": DEFAULT_FOTOS["Lula II (2007–2010)"][0],
+            "resumo": "Maior crescimento do PIB da série (+4,64% ao ano), reduziu a Dívida Bruta (para 51,8% do PIB) com superávit fiscal, triplicou as reservas em dólar, derrubou o desemprego para 6,7% e cortou o desmatamento pela metade."
+        },
+        {
+            "titulo": "🌳 Menor Desmatamento da História & Menor Dívida Líquida",
+            "gov": "Dilma I (2011–2014)",
+            "cor": "#ea580c",
+            "foto": DEFAULT_FOTOS["Dilma I (2011–2014)"][0],
+            "resumo": "Atingiu o menor desmatamento já registrado na Amazônia (média de 5.473 km²/ano e mínima de 4.571 km² em 2012) e a menor Dívida Líquida (30,5% do PIB), antes de perder fôlego fiscal em 2014."
+        },
+        {
+            "titulo": "🛒 Controle Rápido da Inflação & Queda dos Juros Pós-Crise",
+            "gov": "Temer (2016–2018)",
+            "cor": "#0284c7",
+            "foto": DEFAULT_FOTOS["Temer (2016–2018)"][0],
+            "resumo": "Após a grave recessão de 2015–2016, entregou a menor inflação anual de toda a série (2,95% em 2017), derrubou a Selic de 14,25% para 6,50% e retomou o crescimento do PIB."
+        },
+        {
+            "titulo": "💲 Redução da Dívida/PIB Pós-Pandemia",
+            "gov": "Bolsonaro (2019–2022)",
+            "cor": "#2563eb",
+            "foto": DEFAULT_FOTOS["Bolsonaro (2019–2022)"][0],
+            "resumo": "Reduziu a taxa de homicídios de 27,8 para 21,7 por 100 mil hab., avançou no IDEB do Ensino Médio (4,3) e terminou o mandato com Dívida Bruta menor do que recebeu (71,7% vs. 75,3% do PIB)."
+        },
+        {
+            "titulo": "💼 Recorde de Emprego, Salário Real & Balança Comercial",
+            "gov": "Lula III (2023–2026)",
+            "cor": "#059669",
+            "foto": DEFAULT_FOTOS["Lula III (2023–2026)"][0],
+            "resumo": "Atingiu o menor desemprego da série (5,4%), o maior salário mínimo real (R$ 1.936), a menor desigualdade (Gini 0,504) e o maior saldo comercial da história (+US$ 305,9 bi), mas com alta na dívida pública."
+        }
+    ]
+
+    cols_podio_1 = st.columns(3)
+    for idx in range(3):
+        c = podio_cards[idx]
+        cor_c, titulo_c, foto_c, gov_c, resumo_c = c["cor"], c["titulo"], c["foto"], c["gov"], c["resumo"]
+        eh_vencedor_geral = (gov_c == "Lula II (2007–2010)")
+        bg_card = "linear-gradient(180deg, #dcfce7 0%, #ecfdf5 100%)" if eh_vencedor_geral else "#ffffff"
+        border_card = "2px solid #22c55e" if eh_vencedor_geral else "1px solid #e2e8f0"
+        selo_vencedor = (
+            '<div style="margin-bottom:6px;"><span style="display:inline-block; background:#16a34a; color:#ffffff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px; text-transform:uppercase;">★ Vencedor Geral nos Dados</span></div>'
+            if eh_vencedor_geral else ""
+        )
+        card_html = (
+            f'<div style="border:{border_card}; border-left:5px solid {cor_c}; border-radius:14px; padding:14px; background:{bg_card}; margin-bottom:12px; min-height:175px;">'
+            f'{selo_vencedor}'
+            f'<div style="font-size:11px; font-weight:800; color:{cor_c}; text-transform:uppercase; margin-bottom:8px;">{titulo_c}</div>'
+            f'<div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">'
+            f'<img src="{foto_c}" style="width:44px; height:44px; border-radius:50%; object-fit:cover; object-position:center 18%; border:2px solid {cor_c};" />'
+            f'<div style="font-weight:800; font-size:15px; color:#0f172a;">{gov_c}</div>'
+            f'</div>'
+            f'<p style="font-size:12px; color:#475569; line-height:1.5; margin:0;">{resumo_c}</p>'
+            f'</div>'
+        )
+        with cols_podio_1[idx]:
+            st.markdown(card_html, unsafe_allow_html=True)
+
+    cols_podio_2 = st.columns(3)
+    for idx in range(3, 6):
+        c = podio_cards[idx]
+        cor_c, titulo_c, foto_c, gov_c, resumo_c = c["cor"], c["titulo"], c["foto"], c["gov"], c["resumo"]
+        card_html = (
+            f'<div style="border:1px solid #e2e8f0; border-left:5px solid {cor_c}; border-radius:14px; padding:14px; background:#ffffff; margin-bottom:12px; min-height:175px;">'
+            f'<div style="font-size:11px; font-weight:800; color:{cor_c}; text-transform:uppercase; margin-bottom:8px;">{titulo_c}</div>'
+            f'<div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">'
+            f'<img src="{foto_c}" style="width:44px; height:44px; border-radius:50%; object-fit:cover; object-position:center 18%; border:2px solid {cor_c};" />'
+            f'<div style="font-weight:800; font-size:15px; color:#0f172a;">{gov_c}</div>'
+            f'</div>'
+            f'<p style="font-size:12px; color:#475569; line-height:1.5; margin:0;">{resumo_c}</p>'
+            f'</div>'
+        )
+        with cols_podio_2[idx - 3]:
+            st.markdown(card_html, unsafe_allow_html=True)
+
+    st.markdown("")
+    st.subheader("2. O Último Mandato — Lula III (2023–2026) — foi bom?")
+    st.caption("Os dados mostram um governo com **dois lados muito distintos**: **excelente** desempenho no emprego, bolso do trabalhador e meio ambiente, mas pressionado no endividamento público e nos juros.")
+
+    col_pro, col_con = st.columns(2)
+    with col_pro:
+        st.markdown(
+            """
+            <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:16px; padding:18px; height:100%;">
+                <div style="font-size:15px; font-weight:800; color:#166534; margin-bottom:10px;">
+                    🟢 Onde foi MUITO BEM (Economia Real, Social e Ambiental)
+                </div>
+                <ul style="font-size:13px; color:#14532d; line-height:1.65; padding-left:18px; margin:0;">
+                    <li><b>Menor Desemprego da Série (5,4%):</b> Caiu de 9,3% (2022) para a mínima histórica no IBGE, com forte geração de vagas formais.</li>
+                    <li><b>Maior Poder de Compra do Salário Mínimo (R$ 1.936):</b> Ganho real de +11,1% descontada toda a inflação do período.</li>
+                    <li><b>Mínima Histórica de Desigualdade e Queda da Pobreza:</b> O Índice de Gini atingiu o melhor nível da história em 2024 (0,504) e a pobreza caiu de 31,6% para 22,4%.</li>
+                    <li><b>PIB Acima do Esperado (+2,70% a.a.) e Menor Inflação Média (4,41%):</b> Crescimento sustentado pela agropecuária, serviços e consumo, com recorde de US$ 305,9 bi na balança comercial.</li>
+                    <li><b>Queda de mais de 50% no Desmatamento:</b> A taxa na Amazônia Legal recuou de 11.594 km² (2022) para 6.518 km² (2024) e 5.731 km² (2025).</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col_con:
+        st.markdown(
+            """
+            <div style="background:#fef2f2; border:1px solid #fca5a5; border-radius:16px; padding:18px; height:100%;">
+                <div style="font-size:15px; font-weight:800; color:#991b1b; margin-bottom:10px;">
+                    🔴 Onde deixou ALGUNS ALERTAS (Dívida e Juros)
+                </div>
+                <ul style="font-size:13px; color:#7f1d1d; line-height:1.65; padding-left:18px; margin:0;">
+                    <li><b>Salto de +10,2 pontos na Dívida Bruta (de 71,7% para 81,9% do PIB):</b> Segundo maior avanço de endividamento da série (atrás apenas da recessão de 2015–2018).</li>
+                    <li><b>Quatro Anos Seguidos de Déficit Primário (-0,80% do PIB/ano):</b> Diferente de Lula I e Lula II (que economizavam mais de 2,7% do PIB ao ano), as despesas cresceram acima do necessário para estabilizar a dívida.</li>
+                    <li><b>Juros Básicos Muito Altos (Selic entre 11,75% e 14,25%):</b> A dificuldade fiscal manteve as expectativas de inflação pressionadas, levando o Banco Central a manter o crédito caro.</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.markdown("")
+    st.subheader("3. Semáforo Resumido dos 6 Ciclos Presidenciais")
+    st.caption("Leitura rápida com cores: 🟢 Ponto Forte / Melhora • 🟡 Intermediário / Estável • 🔴 Ponto Crítico / Piora • ⚪ Neutro")
+
+    df_semaforo = pd.DataFrame([
+        {
+            "Mandato": "Lula I (2003–2006)",
+            "Crescimento do PIB": "🟢 +3,51% a.a.",
+            "Inflação (IPCA)": "🟡 6,43% a.a. (em queda)",
+            "Contas e Dívida (% PIB)": "🟢 Superávit +3,46% | Dívida estável (55,5%)",
+            "Emprego e Renda Real": "🟢 Desemprego 10,0% | Salário +25%",
+            "Social (Pobreza e Gini)": "🟢 Pobreza caiu 10 p.p. (31,8%)",
+            "Amazônia (Desmatamento)": "🟡 Pico em 2004, mas caiu 49% até 2006",
+            "Segurança (Homicídios)": "🟢 Caiu de 28,9 para 26,6 /100 mil"
+        },
+        {
+            "Mandato": "Lula II (2007–2010)",
+            "Crescimento do PIB": "🟢 +4,64% a.a. (1º lugar)",
+            "Inflação (IPCA)": "🟢 5,15% a.a. (na meta)",
+            "Contas e Dívida (% PIB)": "🟢 Superávit +2,78% | Dívida caiu a 51,8%",
+            "Emprego e Renda Real": "🟢 Desemprego caiu a 6,7% | Salário +21%",
+            "Social (Pobreza e Gini)": "🟢 Pobreza caiu a 23,2% | Gini 0,533",
+            "Amazônia (Desmatamento)": "🟢 Caiu pela metade (7.000 km² em 2010)",
+            "Segurança (Homicídios)": "🟡 Subiu de 26,6 para 27,8 /100 mil"
+        },
+        {
+            "Mandato": "Dilma I (2011–2014)",
+            "Crescimento do PIB": "🟡 +2,35% a.a. (0,5% em 2014)",
+            "Inflação (IPCA)": "🟡 6,17% a.a. (teto da meta)",
+            "Contas e Dívida (% PIB)": "🟡 1º déficit em 2014 (-0,56%) | Dívida 56,3%",
+            "Emprego e Renda Real": "🟢 Pleno emprego (6,9%) | Salário R$ 1.694",
+            "Social (Pobreza e Gini)": "🟢 Pobreza 22,8% | Gini caiu a 0,518",
+            "Amazônia (Desmatamento)": "🟢 Menor da história (média 5.473 km²)",
+            "Segurança (Homicídios)": "🔴 Subiu para 29,8 /100 mil"
+        },
+        {
+            "Mandato": "Dilma II / Temer (2015–2018)",
+            "Crescimento do PIB": "🔴 -0,93% a.a. (recessão 15–16)",
+            "Inflação (IPCA)": "🟡 10,7% (2015) → 🟢 2,95% (2017)",
+            "Contas e Dívida (% PIB)": "🔴 Déficit -1,90% | Dívida subiu +19 p.p. (75,3%)",
+            "Emprego e Renda Real": "🔴 Desemprego dobrou (12,4%) | Salário estável",
+            "Social (Pobreza e Gini)": "🔴 Pobreza subiu a 29,2% | Gini 0,545",
+            "Amazônia (Desmatamento)": "🟡 Subiu gradualmente (média 7.146 km²)",
+            "Segurança (Homicídios)": "🔴 Recorde em 2017 (31,6), caindo em 2018 (27,8)"
+        },
+        {
+            "Mandato": "Bolsonaro (2019–2022)",
+            "Crescimento do PIB": "🟡 +1,43% a.a. (pandemia em 2020)",
+            "Inflação (IPCA)": "🔴 6,17% a.a. (pico de 10,1% em 2021)",
+            "Contas e Dívida (% PIB)": "🟢 Dívida caiu de 75,3% para 71,7% no fim",
+            "Emprego e Renda Real": "🟡 Pico de 13,8% (2020), caindo a 9,3% (2022)",
+            "Social (Pobreza e Gini)": "🟡 Pico de pobreza em 2021, Gini 0,518 em 2022",
+            "Amazônia (Desmatamento)": "🔴 Alta para média de 11.403 km²/ano",
+            "Segurança (Homicídios)": "⚪ Forte queda para 21,7 /100 mil - Entretanto, se deu pelo COVID"
+        },
+        {
+            "Mandato": "Lula III (2023–2026)",
+            "Crescimento do PIB": "🟢 +2,70% a.a.",
+            "Inflação (IPCA)": "🟢 4,41% a.a. (menor média)",
+            "Contas e Dívida (% PIB)": "🔴 Déficit -0,80% | Dívida subiu a 81,9%",
+            "Emprego e Renda Real": "🟢 Menor desemprego (5,4%) | Maior salário (R$ 1.936)",
+            "Social (Pobreza e Gini)": "🟢 Menor pobreza (22,4%) e menor Gini (0,504)",
+            "Amazônia (Desmatamento)": "🟢 Queda de >50% (5.731 km² em 2025)",
+            "Segurança (Homicídios)": "🟢 Menor taxa da série (19,8 /100 mil)"
+        }
+    ])
+    st.dataframe(df_semaforo, use_container_width=True, hide_index=True)
+
 # Resumo por mandato calculado para as demais abas
 df_resumo = calcular_resumo_mandatos(df_filtrado, cod_indicador, meta_ind["tipo_agregacao"], col_grupo)
 df_resumo["Mandato_Label_Curto"] = df_resumo["Mandato"].apply(formatar_rotulo_eixo_x)
@@ -420,15 +639,30 @@ def render_cabecalho_e_kpis() -> None:
         f"**- O que os dados mostram (2003–2026)?** {insight_geral}"
     )
     if len(df_resumo) > 0:
+        pol = meta_ind.get("polaridade", "neutro")
+        mandato_vencedor = None
+        if pol == "maior_melhor":
+            mandato_vencedor = df_resumo.loc[df_resumo["Média Anual"].idxmax(), "Mandato"]
+        elif pol == "menor_melhor":
+            mandato_vencedor = df_resumo.loc[df_resumo["Média Anual"].idxmin(), "Mandato"]
+
         cols_kpi = st.columns(len(df_resumo))
         for idx, row in df_resumo.iterrows():
             mandato_id = row["Mandato"]
+            eh_vencedor = (mandato_vencedor is not None and mandato_id == mandato_vencedor)
             m_info = mapa_cfg.get(mandato_id, {})
             cor = m_info.get("cor", "#334155")
             curto = m_info.get("curto", mandato_id.split(" (")[0])
             default_f1, default_f2 = DEFAULT_FOTOS.get(mandato_id, ("", None))
             foto1 = m_info.get("foto") or default_f1
             foto2 = m_info.get("foto_extra") or default_f2
+
+            bg_kpi = "linear-gradient(180deg, #dcfce7 0%, #ecfdf5 100%)" if eh_vencedor else "#ffffff"
+            borda_kpi = "2px solid #22c55e" if eh_vencedor else "1px solid #e2e8f0"
+            badge_vencedor_html = (
+                '<div style="background:#16a34a; color:#ffffff; font-size:10px; font-weight:800; padding:2px 7px; border-radius:999px; display:inline-block; margin-bottom:4px; text-transform:uppercase;">🏆 Melhor Média</div>'
+                if eh_vencedor else '<div style="height:18px;"></div>'
+            )
 
             if foto2:
                 imgs_html = (
@@ -442,20 +676,24 @@ def render_cabecalho_e_kpis() -> None:
                     f'<img src="{foto1}" style="width:50px; height:50px; border-radius:50%; object-fit:cover; object-position:center 18%; border:2px solid {cor}; margin:0 auto 6px auto; display:block;" />'
                 )
 
+            periodo_r = row["Período"]
+            resumo_r = row["Resumo Principal"]
+            detalhe_r = row["Detalhe"]
+            ini_r = row["Início (1º Ano)"]
+            fim_r = row["Fim (Último Ano)"]
+            kpi_html = (
+                f'<div style="border:{borda_kpi}; border-top:4px solid {cor}; border-radius:14px; padding:10px; background:{bg_kpi}; text-align:center; box-shadow:0 1px 2px rgba(0,0,0,0.04); margin-bottom:10px;">'
+                f'{badge_vencedor_html}'
+                f'{imgs_html}'
+                f'<div style="font-weight:800; font-size:13px; color:#0f172a;">{curto}</div>'
+                f'<div style="font-size:11px; color:#64748b; margin-bottom:4px;">{periodo_r}</div>'
+                f'<div style="font-weight:800; font-size:15px; color:#0f172a;">{resumo_r}</div>'
+                f'<div style="font-size:11px; font-weight:600; color:#475569; margin-top:2px;">{detalhe_r}</div>'
+                f'<div style="font-size:10px; color:#94a3b8; margin-top:5px; border-top:1px solid #f1f5f9; padding-top:4px;">Início: <b>{ini_r}</b> → Fim: <b>{fim_r}</b></div>'
+                f'</div>'
+            )
             with cols_kpi[idx]:
-                st.markdown(
-                    f"""
-                    <div style="border:1px solid #e2e8f0; border-top:4px solid {cor}; border-radius:14px; padding:10px; background:#ffffff; text-align:center; box-shadow:0 1px 2px rgba(0,0,0,0.04); margin-bottom:10px;">
-                        {imgs_html}
-                        <div style="font-weight:800; font-size:13px; color:#0f172a;">{curto}</div>
-                        <div style="font-size:11px; color:#64748b; margin-bottom:4px;">{row['Período']}</div>
-                        <div style="font-weight:800; font-size:15px; color:#0f172a;">{row['Resumo Principal']}</div>
-                        <div style="font-size:11px; font-weight:600; color:#475569; margin-top:2px;">{row['Detalhe']}</div>
-                        <div style="font-size:10px; color:#94a3b8; margin-top:5px; border-top:1px solid #f1f5f9; padding-top:4px;">Início: <b>{row['Início (1º Ano)']}</b> → Fim: <b>{row['Fim (Último Ano)']}</b></div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+                st.markdown(kpi_html, unsafe_allow_html=True)
 
 
 with aba1:
