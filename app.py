@@ -307,12 +307,12 @@ with aba_home:
                 Dados Abertos Oficiais • Para todos • 2003 a 2026
             </span>
             <h1 style="color:#ffffff; font-size:28px; font-weight:800; margin:12px 0 8px 0;">
-                🇧🇷 Observatório Socioeconômico dos Mandatos Presidenciais
+                🇧🇷 Análise de Mandatos Presidenciais 🇧🇷
             </h1>
             <p style="color:#cbd5e1; font-size:15px; line-height:1.6; max-width:920px; margin:0;">
-                Este projeto nasceu para aproximar qualquer cidadão dos indicadores oficiais do Brasil ao longo dos últimos
-                <b>6 ciclos presidenciais (2003–2026)</b>. Em vez de jargões técnicos, traduzimos <b>20 séries históricas públicas</b>
-                em gráficos claros, explicações do dia a dia e contexto histórico para que você possa comparar governos com base em fatos verificáveis.
+                Este projeto nasceu para aproximar os cidadões dos indicadores oficiais do Brasil e nos preparar para o segundo turno da eleição de 2026.
+                Trouxe <b>6 ciclos presidenciais (2003–2026)</b>. Todas as <b>20 séries históricas</b> são públicas
+                em gráficos claros, explicações do dia a dia e contexto histórico para que qualquer um possa comparar governos com base em fatos verificáveis.
             </p>
         </div>
         """,
