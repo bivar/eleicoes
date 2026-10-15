@@ -311,7 +311,7 @@ with aba_home:
             </h1>
             <p style="color:#cbd5e1; font-size:15px; line-height:1.6; max-width:920px; margin:0;">
                 Este projeto nasceu para aproximar os cidadões dos indicadores oficiais do Brasil e nos preparar para o segundo turno da eleição de 2026.
-                Trouxe <b>6 ciclos presidenciais (2003–2026)</b>. Todas as <b>20 séries históricas</b> são públicas
+                Trouxe <b>6 ciclos presidenciais (2003–2026)</b>. Todas as <b>20 séries históricas</b> são públicas e estão dispostas
                 em gráficos claros, explicações do dia a dia e contexto histórico para que qualquer um possa comparar governos com base em fatos verificáveis.
             </p>
         </div>
