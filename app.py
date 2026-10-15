@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Data App em Streamlit: Avaliação Socioeconômica do Brasil nos Últimos 6 Mandatos Presidenciais (2003–2026)
-Versão blindada para Streamlit Community Cloud:
-- Fotos redondas dos governantes
-- Linguagem acessível e insights interpretativos
-- Renderizador Plotly via HTML/CDN (`st.components.v1.html`) imune ao bug `Failed to fetch dynamically imported module: PlotlyChart.js`
-- Keys únicas em todos os componentes e `st.stop()` final contra `StreamlitDuplicateElementId`
+Data App em Streamlit: Observatório Socioeconômico do Brasil nos Últimos 6 Mandatos Presidenciais (2003–2026)
+- Página Inicial Explicativa ('🏠 Apresentação do Projeto') para público geral
+- Fotos redondas dos governantes e linguagem acessível com insights interpretativos
+- Gráficos Plotly sem sobreposição de eixos/legendas (automargin, rótulos em 2 linhas, barra de ferramentas oculta)
+- Renderizador HTML/CDN imune ao erro `PlotlyChart.js` no Streamlit Community Cloud
 Execute localmente com:
     streamlit run app.py
 """
@@ -32,32 +31,73 @@ st.set_page_config(
 )
 
 
-def mostrar_grafico_plotly(fig, height: int = 440) -> None:
+def formatar_rotulo_eixo_x(mandato_str: str) -> str:
+    """Quebra o nome do mandato em duas linhas curtas para nunca sobrepor no eixo X."""
+    if " (" in mandato_str:
+        nome, periodo = mandato_str.split(" (", 1)
+        periodo = periodo.rstrip(")")
+        return f"<b>{nome}</b><br><span style='font-size:11px;color:#64748b'>{periodo}</span>"
+    return mandato_str
+
+
+def mostrar_grafico_plotly(fig, height: int = 450, show_legend: bool = False) -> None:
     """
-    Renderiza gráficos Plotly via HTML/CDN contornando o erro de chunk dinâmico `PlotlyChart.<hash>.js`
-    no Streamlit Community Cloud.
+    Renderiza gráficos Plotly via HTML/CDN sem sobreposição de títulos, eixos ou legendas,
+    contornando também o erro `PlotlyChart.<hash>.js` no Streamlit Community Cloud.
     """
     fig.update_layout(
-        margin=dict(l=20, r=20, t=50, b=20),
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(248,250,252,0.8)",
-        font=dict(family="Inter, sans-serif", color="#0f172a"),
-        height=height - 20
+        title=dict(
+            x=0.01,
+            xanchor="left",
+            y=0.96,
+            yanchor="top",
+            font=dict(size=15, family="Inter, sans-serif", color="#0f172a")
+        ),
+        margin=dict(l=55, r=25, t=68, b=72 if show_legend else 58),
+        paper_bgcolor="#ffffff",
+        plot_bgcolor="#f8fafc",
+        font=dict(family="Inter, sans-serif", size=12, color="#1e293b"),
+        height=height - 18,
+        showlegend=show_legend,
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=-0.18,
+            xanchor="center",
+            x=0.5,
+            bgcolor="rgba(255,255,255,0.9)",
+            font=dict(size=11)
+        ) if show_legend else dict()
     )
+    fig.update_xaxes(
+        automargin=True,
+        tickangle=0,
+        title_text=None,
+        gridcolor="#eef2f6",
+        linecolor="#cbd5e1"
+    )
+    fig.update_yaxes(
+        automargin=True,
+        title_standoff=12,
+        gridcolor="#e2e8f0",
+        zerolinecolor="#94a3b8",
+        zerolinewidth=1.5
+    )
+
     html_str = fig.to_html(
         include_plotlyjs="cdn",
         full_html=False,
-        config={"displayModeBar": True, "responsive": True, "displaylogo": False}
+        config={"displayModeBar": False, "responsive": True, "displaylogo": False}
     )
     wrapper = f"""
-    <div style="width:100%; overflow:hidden; background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:6px;">
+    <div style="width:100%; overflow:hidden; background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:8px; box-sizing:border-box;">
         {html_str}
     </div>
     """
     components.html(wrapper, height=height, scrolling=False)
 
 
-# Fallbacks defensivos caso o ambiente tenha uma versão anterior de src/config.py sem fotos ou insights
+# Fallbacks defensivos caso o ambiente tenha uma versão anterior de src/config.py
 DEFAULT_FOTOS = {
     "Lula I (2003–2006)": ("https://upload.wikimedia.org/wikipedia/commons/3/3b/Lula_-_foto_oficial_-_05_jan_2007_%283x4_cropped%29.jpg", None),
     "Lula II (2007–2010)": ("https://upload.wikimedia.org/wikipedia/commons/3/3b/Lula_-_foto_oficial_-_05_jan_2007_%283x4_cropped%29.jpg", None),
@@ -205,7 +245,7 @@ def get_data() -> pd.DataFrame:
 df = get_data()
 
 # Sidebar amigável com keys explícitas
-st.sidebar.title("🇧🇷 Painel Socioeconômico")
+st.sidebar.title("🇧🇷 Comparação entre Mandatos 🇧🇷 ")
 st.sidebar.caption("Comparativo Visual de Mandatos Presidenciais (2003–2026) com Dados Abertos Oficiais")
 
 modo_mandato = st.sidebar.radio(
@@ -250,8 +290,119 @@ mandatos_ativos = st.sidebar.multiselect(
 
 df_filtrado = df[df[col_grupo].isin(mandatos_ativos)].copy()
 
-# Cabeçalho e Card Explicativo para Público Geral
-st.title(f"{icone_ind} {meta_ind['nome']} ({meta_ind['unidade']})")
+# Abas Principais (incluindo a nova Página Inicial Explicativa)
+aba_home, aba1, aba2, aba3, aba4 = st.tabs([
+    "🏠 Apresentação do Projeto",
+    "🏆 Comparativo por Governo",
+    "📈 Linha do Tempo (2003–2026)",
+    "⚖️ Evolução do 1º ao 4º Ano",
+    "🔗 Fontes & Download CSV"
+])
+
+with aba_home:
+    st.markdown(
+        """
+        <div style="background:linear-gradient(135deg, #0f172a 0%, #064e3b 100%); color:#ffffff; border-radius:18px; padding:28px 32px; margin-bottom:20px;">
+            <span style="background:rgba(16,185,129,0.2); border:1px solid rgba(52,211,153,0.4); color:#6ee7b7; font-size:12px; font-weight:700; padding:4px 12px; border-radius:999px; text-transform:uppercase; letter-spacing:0.05em;">
+                Dados Abertos Oficiais • Para todos • 2003 a 2026
+            </span>
+            <h1 style="color:#ffffff; font-size:28px; font-weight:800; margin:12px 0 8px 0;">
+                🇧🇷 Observatório Socioeconômico dos Mandatos Presidenciais
+            </h1>
+            <p style="color:#cbd5e1; font-size:15px; line-height:1.6; max-width:920px; margin:0;">
+                Este projeto nasceu para aproximar qualquer cidadão dos indicadores oficiais do Brasil ao longo dos últimos
+                <b>6 ciclos presidenciais (2003–2026)</b>. Em vez de jargões técnicos, traduzimos <b>20 séries históricas públicas</b>
+                em gráficos claros, explicações do dia a dia e contexto histórico para que você possa comparar governos com base em fatos verificáveis.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.subheader("Governos e Períodos Analisados (2003–2026)")
+    cols_pres = st.columns(len(lista_mandatos_cfg))
+    resumos_curtos_home = {
+        "Lula I (2003–2006)": "Ajuste externo, boom de commodities, queda da inflação e criação do Bolsa Família.",
+        "Lula II (2007–2010)": "Forte expansão do PIB e do emprego formal, valorização do salário mínimo e enfrentamento da crise global de 2008/2009.",
+        "Dilma I (2011–2014)": "Baixo desemprego e mínima histórica de desmatamento em 2012, mas desaceleração do PIB e deterioração fiscal em 2014.",
+        "Dilma II / Temer (2015–2018)": "Forte recessão e inflação em 2015–2016, impeachment em 2016, aprovação do Teto de Gastos e queda da inflação/Selic em 2017–2018.",
+        "Dilma II (2015–2016)": "Baque recessivo, realinhamento de tarifas represadas e crise política que culminou no impeachment em 2016.",
+        "Temer (2016–2018)": "Controle da inflação (2,95% em 2017), queda da Selic a 6,5%, Teto de Gastos e reforma trabalhista.",
+        "Bolsonaro (2019–2022)": "Choque global da pandemia de COVID-19 (2020–2021), queda nos homicídios (devido ao COVID) e retomada do PIB/emprego em 2021–2022 com uma alta de juros.",
+        "Lula III (2023–2026)": "Recordes na balança comercial, mínimas históricas de desemprego e Gini, queda no desmatamento e pressão da dívida sob juros altos."
+    }
+    for i, m in enumerate(lista_mandatos_cfg):
+        m_id = m["id"]
+        cor = m["cor"]
+        curto = m.get("curto", m_id.split(" (")[0])
+        f1, f2 = DEFAULT_FOTOS.get(m_id, ("", None))
+        foto1 = m.get("foto") or f1
+        foto2 = m.get("foto_extra") or f2
+        if foto2:
+            avatar_home = (
+                f'<div style="display:flex; justify-content:center; margin-bottom:8px;">'
+                f'<img src="{foto1}" style="width:52px; height:52px; border-radius:50%; object-fit:cover; object-position:center 18%; border:2px solid {cor}; margin-right:-10px; z-index:2;" />'
+                f'<img src="{foto2}" style="width:52px; height:52px; border-radius:50%; object-fit:cover; object-position:center 18%; border:2px solid {cor}; z-index:1;" />'
+                f'</div>'
+            )
+        else:
+            avatar_home = (
+                f'<img src="{foto1}" style="width:56px; height:56px; border-radius:50%; object-fit:cover; object-position:center 18%; border:2px solid {cor}; margin:0 auto 8px auto; display:block;" />'
+            )
+        with cols_pres[i]:
+            st.markdown(
+                f"""
+                <div style="border:1px solid #e2e8f0; border-top:4px solid {cor}; border-radius:14px; padding:12px; background:#ffffff; text-align:center; height:100%;">
+                    {avatar_home}
+                    <div style="font-weight:800; font-size:13px; color:#0f172a;">{curto}</div>
+                    <div style="font-size:11px; color:#64748b; margin-bottom:6px;">{m['inicio']}–{m['fim']}</div>
+                    <p style="font-size:11px; color:#475569; line-height:1.45; margin:0;">{resumos_curtos_home.get(m_id, '')}</p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+    st.markdown("")
+    c_guia1, c_guia2 = st.columns(2)
+    with c_guia1:
+        st.markdown(
+            """
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:18px;">
+                <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin-top:0;">O que você pode explorar nas abas ao lado?</h3>
+                <ul style="font-size:13px; color:#334155; line-height:1.7; padding-left:18px; margin-bottom:0;">
+                    <li><b>Macroeconomia & Bolso:</b> Crescimento do PIB Real, Inflação (IPCA), Taxa de Juros Selic e Dólar.</li>
+                    <li><b>Contas Públicas:</b> Dívida Bruta (DBGG), Dívida Líquida e Resultado Primário (% do PIB).</li>
+                    <li><b>Trabalho & Renda:</b> Taxa de Desemprego e Poder de Compra Real do Salário Mínimo (a preços de 2026).</li>
+                    <li><b>Social, Educação & Saúde:</b> Desigualdade (Gini), Pobreza, notas do IDEB, Mortalidade Infantil e Expectativa de Vida.</li>
+                    <li><b>Segurança, Amazônia & Setor Externo:</b> Taxa de Homicídios, Desmatamento PRODES/INPE e Saldo da Balança Comercial.</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    with c_guia2:
+        st.markdown(
+            """
+            <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:14px; padding:18px;">
+                <h3 style="font-size:16px; font-weight:800; color:#065f46; margin-top:0;">3 Dicas para Ler os Dados como um Especialista</h3>
+                <ol style="font-size:13px; color:#064e3b; line-height:1.7; padding-left:18px; margin-bottom:0;">
+                    <li><b>Diferencie Fluxo e Estoque:</b> Indicadores como PIB, Inflação e Balança Comercial somam-se ano a ano (fluxo); já Desemprego, Dívida/PIB e Gini mostram como o país estava no início e no fim de cada mandato (estoque).</li>
+                    <li><b>Desconte a Inflação:</b> Comparar salários em valores nominais engana; por isso nosso indicador de Salário Mínimo já está corrigido pelo IPCA para reais de 2026.</li>
+                    <li><b>Considere Choques Globais:</b> Crises mundiais (como 2008/2009 e a pandemia de COVID-19 em 2020–2021) ou booms de commodities afetam todos os países ao mesmo tempo.</li>
+                </ol>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    
+    st.markdown("---")
+
+    st.info("**Como começar:** Use o menu lateral à esquerda para escolher o **Tema** e o **Indicador**, e clique na aba **Comparativo por Governo** ou **Linha do Tempo (2003–2026)** logo acima!")
+
+# Resumo por mandato calculado para as demais abas
+df_resumo = calcular_resumo_mandatos(df_filtrado, cod_indicador, meta_ind["tipo_agregacao"], col_grupo)
+df_resumo["Mandato_Label_Curto"] = df_resumo["Mandato"].apply(formatar_rotulo_eixo_x)
+mapa_cores_curto = {formatar_rotulo_eixo_x(k): v for k, v in mapa_cores.items()}
 
 polaridade_badge = (
     "🟢 **Quanto MAIOR, melhor**" if meta_ind.get("polaridade") == "maior_melhor"
@@ -259,95 +410,99 @@ polaridade_badge = (
     else "🔵 **Indicador de Preço Relativo**"
 )
 
-st.info(
-    f"{polaridade_badge}  |  🔗 **Fonte Oficial:** [{meta_ind['fonte']}]({meta_ind['url']}) (`{meta_ind['codigo_api']}`)\n\n"
-    f"**💡 O que este indicador significa no dia a dia?** {explicacao_leigo}\n\n"
-    f"**🔎 O que os dados mostram (2003–2026)?** {insight_geral}"
-)
 
-# Resumo por mandato com Fotos Redondas (incluindo suporte a foto dupla para Dilma II / Temer)
-df_resumo = calcular_resumo_mandatos(df_filtrado, cod_indicador, meta_ind["tipo_agregacao"], col_grupo)
+def render_cabecalho_e_kpis() -> None:
+    """Renderiza o cabeçalho explicativo e os cards com fotos redondas nas abas analíticas."""
+    st.subheader(f"{icone_ind} {meta_ind['nome']} ({meta_ind['unidade']})")
+    st.info(
+        f"{polaridade_badge}  |  🔗 **Fonte Oficial:** [{meta_ind['fonte']}]({meta_ind['url']}) (`{meta_ind['codigo_api']}`)\n\n"
+        f"**- O que este indicador significa no dia a dia?** {explicacao_leigo}\n\n"
+        f"**- O que os dados mostram (2003–2026)?** {insight_geral}"
+    )
+    if len(df_resumo) > 0:
+        cols_kpi = st.columns(len(df_resumo))
+        for idx, row in df_resumo.iterrows():
+            mandato_id = row["Mandato"]
+            m_info = mapa_cfg.get(mandato_id, {})
+            cor = m_info.get("cor", "#334155")
+            curto = m_info.get("curto", mandato_id.split(" (")[0])
+            default_f1, default_f2 = DEFAULT_FOTOS.get(mandato_id, ("", None))
+            foto1 = m_info.get("foto") or default_f1
+            foto2 = m_info.get("foto_extra") or default_f2
 
-if len(df_resumo) > 0:
-    cols_kpi = st.columns(len(df_resumo))
-    for idx, row in df_resumo.iterrows():
-        mandato_id = row["Mandato"]
-        m_info = mapa_cfg.get(mandato_id, {})
-        cor = m_info.get("cor", "#334155")
-        curto = m_info.get("curto", mandato_id.split(" (")[0])
-        default_f1, default_f2 = DEFAULT_FOTOS.get(mandato_id, ("", None))
-        foto1 = m_info.get("foto") or default_f1
-        foto2 = m_info.get("foto_extra") or default_f2
+            if foto2:
+                imgs_html = (
+                    f'<div style="display:flex; justify-content:center; align-items:center; margin-bottom:6px;">'
+                    f'<img src="{foto1}" style="width:46px; height:46px; border-radius:50%; object-fit:cover; object-position:center 18%; border:2px solid {cor}; margin-right:-10px; z-index:2;" />'
+                    f'<img src="{foto2}" style="width:46px; height:46px; border-radius:50%; object-fit:cover; object-position:center 18%; border:2px solid {cor}; z-index:1;" />'
+                    f'</div>'
+                )
+            else:
+                imgs_html = (
+                    f'<img src="{foto1}" style="width:50px; height:50px; border-radius:50%; object-fit:cover; object-position:center 18%; border:2px solid {cor}; margin:0 auto 6px auto; display:block;" />'
+                )
 
-        if foto2:
-            imgs_html = (
-                f'<div style="display:flex; justify-content:center; align-items:center; margin-bottom:6px;">'
-                f'<img src="{foto1}" style="width:48px; height:48px; border-radius:50%; object-fit:cover; object-position:center 18%; border:2px solid {cor}; margin-right:-10px; z-index:2;" />'
-                f'<img src="{foto2}" style="width:48px; height:48px; border-radius:50%; object-fit:cover; object-position:center 18%; border:2px solid {cor}; z-index:1;" />'
-                f'</div>'
-            )
-        else:
-            imgs_html = (
-                f'<img src="{foto1}" style="width:52px; height:52px; border-radius:50%; object-fit:cover; object-position:center 18%; border:2px solid {cor}; margin:0 auto 6px auto; display:block;" />'
-            )
+            with cols_kpi[idx]:
+                st.markdown(
+                    f"""
+                    <div style="border:1px solid #e2e8f0; border-top:4px solid {cor}; border-radius:14px; padding:10px; background:#ffffff; text-align:center; box-shadow:0 1px 2px rgba(0,0,0,0.04); margin-bottom:10px;">
+                        {imgs_html}
+                        <div style="font-weight:800; font-size:13px; color:#0f172a;">{curto}</div>
+                        <div style="font-size:11px; color:#64748b; margin-bottom:4px;">{row['Período']}</div>
+                        <div style="font-weight:800; font-size:15px; color:#0f172a;">{row['Resumo Principal']}</div>
+                        <div style="font-size:11px; font-weight:600; color:#475569; margin-top:2px;">{row['Detalhe']}</div>
+                        <div style="font-size:10px; color:#94a3b8; margin-top:5px; border-top:1px solid #f1f5f9; padding-top:4px;">Início: <b>{row['Início (1º Ano)']}</b> → Fim: <b>{row['Fim (Último Ano)']}</b></div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-        with cols_kpi[idx]:
-            st.markdown(
-                f"""
-                <div style="border:1px solid #e2e8f0; border-top:4px solid {cor}; border-radius:14px; padding:12px; background:#ffffff; text-align:center; box-shadow:0 1px 2px rgba(0,0,0,0.04);">
-                    {imgs_html}
-                    <div style="font-weight:800; font-size:13px; color:#0f172a;">{curto}</div>
-                    <div style="font-size:11px; color:#64748b; margin-bottom:6px;">{row['Período']}</div>
-                    <div style="font-weight:800; font-size:16px; color:#0f172a;">{row['Resumo Principal']}</div>
-                    <div style="font-size:12px; font-weight:600; color:#475569; margin-top:2px;">{row['Detalhe']}</div>
-                    <div style="font-size:11px; color:#94a3b8; margin-top:6px; border-top:1px solid #f1f5f9; padding-top:4px;">Início: <b>{row['Início (1º Ano)']}</b> → Fim: <b>{row['Fim (Último Ano)']}</b></div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-st.markdown("")
-aba1, aba2, aba3, aba4 = st.tabs([
-    "🏆 Comparativo por Governo",
-    "📈 Linha do Tempo (2003–2026)",
-    "⚖️ Evolução do 1º ao 4º Ano",
-    "🔗 Fontes & Download CSV"
-])
 
 with aba1:
-    c1, c2 = st.columns([3, 2])
+    render_cabecalho_e_kpis()
+    c1, c2 = st.columns(2)
     with c1:
+        y_vals_m = df_resumo["Média Anual"]
+        y_min_m = min(0.0, float(y_vals_m.min()) * 1.28) if len(y_vals_m) else 0.0
+        y_max_m = max(0.0, float(y_vals_m.max()) * 1.24) if len(y_vals_m) else 10.0
+
         fig_bar = px.bar(
             df_resumo,
-            x="Mandato",
+            x="Mandato_Label_Curto",
             y="Média Anual",
-            color="Mandato",
-            color_discrete_map=mapa_cores,
+            color="Mandato_Label_Curto",
+            color_discrete_map=mapa_cores_curto,
             text="Média Anual",
-            title=f"Média Anual em Cada Mandato — {meta_ind['nome']} ({meta_ind['unidade']})"
+            title=f"Média Anual por Mandato ({meta_ind['unidade']})"
         )
-        fig_bar.update_traces(texttemplate="%{text:.2f}", textposition="outside")
-        fig_bar.update_layout(showlegend=False)
-        mostrar_grafico_plotly(fig_bar, height=430)
+        fig_bar.update_traces(texttemplate="%{text:.2f}", textposition="outside", cliponaxis=False)
+        fig_bar.update_yaxes(title_text=None, range=[y_min_m, y_max_m])
+        mostrar_grafico_plotly(fig_bar, height=440, show_legend=False)
 
     with c2:
+        y_vals_v = df_resumo["Acumulado / Variação no Mandato"]
+        y_min_v = min(0.0, float(y_vals_v.min()) * 1.28) if len(y_vals_v) else 0.0
+        y_max_v = max(0.0, float(y_vals_v.max()) * 1.24) if len(y_vals_v) else 10.0
+
         fig_var = px.bar(
             df_resumo,
-            x="Mandato",
+            x="Mandato_Label_Curto",
             y="Acumulado / Variação no Mandato",
-            color="Mandato",
-            color_discrete_map=mapa_cores,
+            color="Mandato_Label_Curto",
+            color_discrete_map=mapa_cores_curto,
             text="Acumulado / Variação no Mandato",
             title=f"Saldo / Variação Total no Mandato ({meta_ind['unidade']})"
         )
-        fig_var.update_traces(texttemplate="%{text:+.2f}", textposition="outside")
-        fig_var.update_layout(showlegend=False)
-        mostrar_grafico_plotly(fig_var, height=430)
+        fig_var.update_traces(texttemplate="%{text:+.2f}", textposition="outside", cliponaxis=False)
+        fig_var.update_yaxes(title_text=None, range=[y_min_v, y_max_v])
+        mostrar_grafico_plotly(fig_var, height=440, show_legend=False)
 
     st.subheader("Tabela Comparativa Detalhada por Mandato")
-    st.dataframe(df_resumo, use_container_width=True, hide_index=True)
+    cols_exibir = [c for c in df_resumo.columns if c != "Mandato_Label_Curto"]
+    st.dataframe(df_resumo[cols_exibir], use_container_width=True, hide_index=True)
 
 with aba2:
+    render_cabecalho_e_kpis()
     fig_ts = go.Figure()
     for m in lista_mandatos_cfg:
         if m["id"] in mandatos_ativos:
@@ -367,19 +522,20 @@ with aba2:
         mode="lines+markers+text",
         text=[f"{v:.1f}" for v in df_filtrado[cod_indicador]],
         textposition="top center",
+        cliponaxis=False,
         line=dict(color="#0f172a", width=3),
         marker=dict(size=9, color=[mapa_cores.get(g, "#334155") for g in df_filtrado[col_grupo]]),
         name=meta_ind["nome"]
     ))
     fig_ts.update_layout(
         title=f"Evolução Histórica Anual (2003–2026) — {meta_ind['nome']} ({meta_ind['unidade']})",
-        xaxis_title="Ano",
-        yaxis_title=meta_ind["unidade"],
         xaxis=dict(dtick=1)
     )
-    mostrar_grafico_plotly(fig_ts, height=490)
+    fig_ts.update_yaxes(title_text=meta_ind["unidade"])
+    mostrar_grafico_plotly(fig_ts, height=490, show_legend=False)
 
 with aba3:
+    render_cabecalho_e_kpis()
     modo_comp = st.radio(
         "Como comparar o início e o fim de cada governo?",
         options=["Valor Original (Ano 1 ao Ano 4)", "Índice Base 100 (1º Ano do Mandato = 100)"],
@@ -403,17 +559,18 @@ with aba3:
         color=col_grupo,
         color_discrete_map=mapa_cores,
         markers=True,
-        title=f"Trajetória Comparada por Ano de Governo — {meta_ind['nome']}",
-        labels={"ano_mandato": "Ano do Mandato (1º ao 4º Ano)", "valor_plot": y_label, col_grupo: "Mandato"}
+        title=f"Trajetória do 1º ao 4º Ano de Governo — {meta_ind['nome']}",
+        labels={"ano_mandato": "Ano do Mandato", "valor_plot": y_label, col_grupo: "Governo"}
     )
-    fig_comp.update_layout(xaxis=dict(dtick=1))
-    mostrar_grafico_plotly(fig_comp, height=470)
+    fig_comp.update_layout(xaxis=dict(dtick=1, tickvals=[1, 2, 3, 4], ticktext=["1º Ano", "2º Ano", "3º Ano", "4º Ano"]))
+    fig_comp.update_yaxes(title_text=y_label)
+    mostrar_grafico_plotly(fig_comp, height=490, show_legend=True)
 
 with aba4:
     st.subheader("Catálogo de Fontes Oficiais e Download da Base (2003–2026)")
     csv_bytes = df.to_csv(index=False).encode("utf-8")
     st.download_button(
-        label="⬇️ Baixar Base Consolidada Completa (CSV)",
+        label="⬇ Baixar Base Consolidada Completa (CSV)",
         data=csv_bytes,
         file_name="dados_socioeconomicos_brasil_2003_2026.csv",
         mime="text/csv",
